@@ -17,7 +17,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "FIREBASE_MSG_KEY", firebase_msg_key)
+        buildConfigField("String", "F_M_K", f_m_k)
     }
 
     buildTypes {
