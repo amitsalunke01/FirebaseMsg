@@ -1,4 +1,4 @@
-package com.amitsalunke.firebasemsg1
+package com.amitsalunke.firebasemsg1.util
 
 import com.amitsalunke.firebasemsg1.BuildConfig
 
