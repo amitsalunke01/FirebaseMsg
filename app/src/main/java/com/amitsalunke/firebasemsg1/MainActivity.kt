@@ -11,14 +11,16 @@ import com.amitsalunke.firebasemsg1.network.RetrofitInstance
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 
-const val TOPIC = "myTopic"
+const val TOPIC = "/topics/myTopic"
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
@@ -35,10 +37,12 @@ class MainActivity : AppCompatActivity() {
             btnSend.setOnClickListener {
                 val title = etTitle.text.toString()
                 val message = etMessage.text.toString()
+                Log.e(TAG, "title : " + title)
+                Log.e(TAG, "MSG : " + message)
                 if (title.isNotEmpty() && message.isNotEmpty()) {
                     PushNotification(
-                        NotificationData(title, message),
-                        TOPIC
+                            NotificationData(title, message),
+                            TOPIC
                     ).also {
                         sendNotification(it)
                     }
@@ -51,18 +55,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendNotification(notification: PushNotification) =
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val response = RetrofitInstance.api.postNotification(notification)
-                if (response.isSuccessful) {
-                    Log.e(TAG, "Is successful ${Gson().toJson(response)}")
-                } else {
-                    Log.e(TAG, "Error  ${response.code()}")
+            // CoroutineScope(IO).launch {
+            lifecycleScope.launch(IO) {
+                try {
+                    val response = RetrofitInstance.api.postNotification(notification)
+                    if (response.isSuccessful) {
+                        Log.e(TAG, "Is successful " + response.toString())
+                    } else {
+                        Log.e(TAG, "Error  ${response.code()}")
+                    }
+                } catch (ex: Exception) {
+                    Log.e(TAG, "Exception while sending the data : " + ex)
                 }
-            } catch (ex: Exception) {
-                Log.e(TAG, "Exception while sending the data : " + ex)
             }
-        }
 }
 
 
